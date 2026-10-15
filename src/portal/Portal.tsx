@@ -8,13 +8,17 @@ import ContentEditor from './pages/ContentEditor';
 import Dashboard from './pages/Dashboard';
 import FacultyAdmin from './pages/FacultyAdmin';
 import GalleryAdmin from './pages/GalleryAdmin';
+import IdCards from './pages/IdCards';
 import Login from './pages/Login';
+import MarksEntry from './pages/MarksEntry';
+import Marksheets from './pages/Marksheets';
 import MediaLibrary from './pages/MediaLibrary';
 import MyProfile from './pages/MyProfile';
 import MyResults from './pages/MyResults';
 import NoticesAdmin from './pages/NoticesAdmin';
 import Results from './pages/Results';
 import StudentLogin from './pages/StudentLogin';
+import Students from './pages/Students';
 import Users from './pages/Users';
 import './portal.css';
 
@@ -49,7 +53,11 @@ export default function Portal() {
         <Route path="website/:section" element={<Guard roles={HT}><ContentEditor /></Guard>} />
         <Route path="media" element={<Guard roles={HT}><MediaLibrary /></Guard>} />
         <Route path="users" element={<Guard roles={HT}><Users /></Guard>} />
+        <Route path="students" element={<Guard roles={HT}><Students /></Guard>} />
+        <Route path="id-cards" element={<Guard roles={HT}><IdCards /></Guard>} />
         <Route path="results" element={<Guard roles={HT}><Results /></Guard>} />
+        <Route path="results/:id/marks" element={<Guard roles={HT}><MarksEntry /></Guard>} />
+        <Route path="results/:id/marksheets" element={<Guard roles={HT}><Marksheets /></Guard>} />
         <Route path="my-results" element={<Guard roles={['student']}><MyResults /></Guard>} />
         <Route path="activity" element={<Guard roles={HT}><Activity /></Guard>} />
         <Route path="*" element={<Navigate to="/portal" replace />} />

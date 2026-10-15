@@ -13,5 +13,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["server", "src/config", "src/lib/seo.ts", "src/vite-env.d.ts"]
+  "include": ["server", "src/config", "src/lib/seo.ts", "src/lib/marksheet.ts", "src/vite-env.d.ts"]
 }

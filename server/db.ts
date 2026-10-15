@@ -11,7 +11,21 @@ export const pool = new pg.Pool({
   connectionString: env.databaseUrl,
   ssl: env.databaseSsl ? { rejectUnauthorized: false } : undefined,
   max: env.poolMax,
+  // Under heavy load, give up waiting for a free connection instead of queueing forever:
+  // the visitor gets "busy, try again" and the server stays healthy.
+  connectionTimeoutMillis: 10_000,
+  query_timeout: 20_000,
+  idleTimeoutMillis: 30_000,
 });
+
+// A dropped idle connection (database restart, network blip) must not crash the server.
+pool.on('error', (err) => console.error('Database connection error', err.message));
+
+/** True for errors caused by the database being overloaded or unreachable. */
+export function isDatabaseBusy(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : '';
+  return /timeout exceeded when trying to connect|Query read timeout|Connection terminated|ECONNREFUSED|too many clients/i.test(msg);
+}
 
 export async function query<T extends pg.QueryResultRow = Record<string, unknown>>(
   text: string,

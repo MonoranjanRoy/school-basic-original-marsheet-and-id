@@ -75,6 +75,7 @@ async function mediaUsage(id: string): Promise<string[]> {
   if (settings?.used) uses.push('website content');
   if ((await query('SELECT 1 FROM gallery_items WHERE media_id = $1 OR src = $2', [id, src])).length) uses.push('gallery');
   if ((await query('SELECT 1 FROM faculty_members WHERE photo_media_id = $1', [id])).length) uses.push('faculty profile');
+  if ((await query('SELECT 1 FROM student_profiles WHERE photo_media_id = $1', [id])).length) uses.push('student photo');
   if ((await query('SELECT 1 FROM notices WHERE attachment_media_id = $1', [id])).length) uses.push('notice attachment');
   return uses;
 }

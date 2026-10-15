@@ -1,7 +1,9 @@
 import { Router } from 'express';
+import { z } from 'zod';
 import { audit } from '../audit.js';
 import { query, transaction } from '../db.js';
-import { hashPassword, temporaryPassword } from '../passwords.js';
+import { hashPassword, MIN_PASSWORD_LENGTH, temporaryPassword } from '../passwords.js';
+import { invalidateResults } from './results.js';
 import { userCreateInput, userUpdateInput } from '../schema.js';
 import { HttpError, requireRole } from '../security.js';
 import { uuidParam, validate } from '../validate.js';
@@ -13,7 +15,7 @@ usersRouter.use(requireRole('head_teacher'));
 const ROLE_NAMES = { head_teacher: 'head teacher', faculty: 'faculty', student: 'student' };
 
 /** Internal username for a student account. Staff usernames cannot contain ":", so these never clash. */
-const studentUsername = (id: string) => `student:${id.toLowerCase()}`;
+export const studentUsername = (id: string) => `student:${id.toLowerCase()}`;
 
 usersRouter.get('/', async (_req, res) => {
   const users = await query(
@@ -26,7 +28,7 @@ usersRouter.get('/', async (_req, res) => {
   res.json({ users });
 });
 
-async function assertStudentIdFree(id: string, exceptUserId: string | null) {
+export async function assertStudentIdFree(id: string, exceptUserId: string | null) {
   const taken = await query('SELECT 1 FROM users WHERE lower(student_id) = lower($1) AND id IS DISTINCT FROM $2', [id, exceptUserId]);
   if (taken.length) throw new HttpError(409, 'Another student already has that student ID.');
 }
@@ -113,6 +115,7 @@ usersRouter.patch('/:id', async (req, res) => {
       signOut ? 1 : 0,
     ],
   );
+  if (isStudent) invalidateResults();
   // Log which fields changed, not their values (a date of birth is personal data).
   await audit(req.user!, 'user.updated', `${isStudent ? `student ${target.student_id}` : target.username}: ${Object.keys(input).join(', ')}`);
   res.json({ ok: true });
@@ -133,6 +136,28 @@ usersRouter.post('/:id/reset-password', async (req, res) => {
   res.json({ username: target.username, temporaryPassword: password });
 });
 
+const setPasswordInput = z.object({
+  password: z.string().min(MIN_PASSWORD_LENGTH, `The password must be at least ${MIN_PASSWORD_LENGTH} characters.`).max(200),
+  mustChange: z.boolean().default(false),
+});
+
+/** The head teacher chooses a staff member's new password. */
+usersRouter.post('/:id/set-password', async (req, res) => {
+  const id = uuidParam(req.params.id);
+  const { password, mustChange } = validate(setPasswordInput, req.body);
+  const [target] = await query<{ username: string; role: string }>('SELECT username, role FROM users WHERE id = $1', [id]);
+  if (!target) throw new HttpError(404, 'Account not found.');
+  if (target.role === 'student') throw new HttpError(400, 'Students sign in with their student ID and date of birth — edit those instead.');
+  if (id === req.user!.id) throw new HttpError(400, 'Use “My account” to change your own password.');
+  if (password.toLowerCase().includes(target.username)) throw new HttpError(400, 'The password must not contain the username.');
+  await query(
+    'UPDATE users SET password_hash = $2, must_change_password = $3, session_version = session_version + 1 WHERE id = $1',
+    [id, await hashPassword(password), mustChange],
+  );
+  await audit(req.user!, 'user.password_set', target.username);
+  res.json({ ok: true });
+});
+
 usersRouter.delete('/:id', async (req, res) => {
   const id = uuidParam(req.params.id);
   if (id === req.user!.id) throw new HttpError(400, 'You cannot delete your own account.');
@@ -146,6 +171,7 @@ usersRouter.delete('/:id', async (req, res) => {
     await c.query('UPDATE faculty_members SET user_id = NULL WHERE user_id = $1', [id]);
     await c.query('DELETE FROM users WHERE id = $1', [id]);
   });
+  if (target.role === 'student') invalidateResults();
   await audit(req.user!, 'user.deleted', target.role === 'student' ? `student ${target.student_id}` : target.username);
   res.json({ ok: true });
 });

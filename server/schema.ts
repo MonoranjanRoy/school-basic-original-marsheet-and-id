@@ -4,6 +4,7 @@
  * `javascript:` links or load images/frames from unexpected places.
  */
 import { z } from 'zod';
+import { GRADE_SCALE_PATTERN, isValidAadhaar } from '../src/lib/marksheet';
 
 const MAX_SHORT = 300;
 const MAX_LONG = 5000;
@@ -136,6 +137,15 @@ export const siteSettingsSchema = z.object({
     admissions: z.boolean(),
   }),
   moderation: z.object({ facultyPostsNeedApproval: z.boolean() }),
+  documents: z.object({
+    udiseCode: text(30),
+    session: text(30),
+    gradeScale: z.string().max(300).regex(GRADE_SCALE_PATTERN, 'Use the form “90:A++, 80:A+, 0:D” (percentage:grade, separated by commas; grades up to 12 characters)'),
+    classTeacherLabel: text(60),
+    headTeacherLabel: text(60),
+    marksheetNote: text(500),
+    idCardNote: text(150),
+  }),
   legal: z.object({
     lastUpdated: isoDate,
     operator: localized().optional(),
@@ -214,3 +224,42 @@ export const userUpdateInput = z.object({
   studentId: studentId.optional(),
   dateOfBirth: dateOfBirth.optional(),
 });
+
+// ---------------------------------------------------------------------------
+// Student details (marksheets and ID cards)
+// ---------------------------------------------------------------------------
+const optText = (max: number) => z.string().trim().max(max).default('');
+
+export const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const;
+export const GENDERS = ['Male', 'Female', 'Other'] as const;
+
+export const studentProfileInput = z.object({
+  className: optText(30),
+  section: optText(10),
+  rollNo: optText(20),
+  admissionNo: optText(40),
+  gender: z.enum(['', ...GENDERS]).default(''),
+  bloodGroup: z.enum(['', ...BLOOD_GROUPS]).default(''),
+  pen: z
+    .string()
+    .trim()
+    .regex(/^[A-Za-z0-9]{0,20}$/, 'PEN: use letters and numbers only (usually 11 digits)')
+    .default(''),
+  aadhaar: z
+    .string()
+    .transform((v) => v.replace(/[\s-]/g, ''))
+    .refine((v) => v === '' || isValidAadhaar(v), 'Aadhaar number is not valid: check the 12 digits')
+    .default(''),
+  fatherName: optText(100),
+  motherName: optText(100),
+  guardianPhone: z
+    .string()
+    .trim()
+    .regex(/^(\+?[\d][\d\s-]{6,18})?$/, 'Enter a valid phone number')
+    .default(''),
+  address: optText(300),
+  photoMediaId: z.uuid().nullable().default(null),
+});
+
+export const studentInput = studentProfileInput.extend({ displayName, studentId, dateOfBirth });
+export type StudentInput = z.infer<typeof studentInput>;

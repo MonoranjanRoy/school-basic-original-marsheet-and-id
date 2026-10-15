@@ -15,7 +15,9 @@ export const env = {
   port: Number(process.env.PORT || 3000),
   databaseUrl: required('DATABASE_URL', 'postgres://postgres:postgres@127.0.0.1:5433/postgres'),
   databaseSsl: process.env.DATABASE_SSL === 'true',
-  poolMax: Number(process.env.PG_POOL_MAX || 10),
+  poolMax: Number(process.env.PG_POOL_MAX || 20),
+  /** Requests handled at once before new ones get "busy, try again" (load shedding). */
+  maxInFlight: Number(process.env.MAX_IN_FLIGHT || 4000),
   /** Redis is required in production for sessions and login rate limiting. */
   redisUrl: isProd ? required('REDIS_URL') : process.env.REDIS_URL || '',
   sessionSecret: required('SESSION_SECRET', 'dev-only-session-secret-change-me'),

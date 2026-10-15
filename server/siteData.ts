@@ -74,15 +74,48 @@ function toPerson(r: FacultyRow): Person {
 
 // ---------- Cached public site data ----------
 let cache: { at: number; data: SchoolConfig } | null = null;
+/** Survives invalidation, so the site stays up even if the database fails right after a save. */
+let lastGood: SchoolConfig | null = null;
+let refreshing: Promise<SchoolConfig> | null = null;
+let generation = 0;
 const CACHE_MS = 30_000;
 
 export function invalidateSite() {
   cache = null;
+  refreshing = null;
+  generation++;
 }
 
-/** Everything the public website shows (public, published content only). */
+/**
+ * Everything the public website shows (public, published content only).
+ * Cached for 30 seconds; while it refreshes, all visitors share one database
+ * read, and if the database is unreachable the last good copy keeps the site up.
+ */
 export async function getPublicSite(): Promise<SchoolConfig> {
   if (cache && Date.now() - cache.at < CACHE_MS) return cache.data;
+  if (!refreshing) {
+    const gen = generation;
+    const p: Promise<SchoolConfig> = loadPublicSite()
+      .then((data) => {
+        lastGood = data;
+        if (gen === generation) cache = { at: Date.now(), data };
+        return data;
+      })
+      .catch((err) => {
+        if (!lastGood) throw err;
+        console.error('Could not refresh website content; showing the last saved copy', err);
+        cache = { at: Date.now() - CACHE_MS + 5_000, data: lastGood }; // try again in 5 seconds
+        return lastGood;
+      })
+      .finally(() => {
+        if (refreshing === p) refreshing = null;
+      });
+    refreshing = p;
+  }
+  return refreshing;
+}
+
+async function loadPublicSite(): Promise<SchoolConfig> {
   const [settings, notices, gallery, faculty] = await Promise.all([
     getSettings(),
     query<NoticeRow>(
@@ -109,7 +142,6 @@ export async function getPublicSite(): Promise<SchoolConfig> {
     faculty: { intro: settings.faculty.intro, members: faculty.map(toPerson) },
     notices: notices.map(toNotice),
   } as SchoolConfig;
-  cache = { at: Date.now(), data };
   return data;
 }
 

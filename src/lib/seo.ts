@@ -18,6 +18,7 @@ export type PageKey =
   | 'contact'
   | 'privacy'
   | 'terms'
+  | 'results'
   | 'notFound';
 
 /** Public URL of every page. Trailing slashes match the pre-rendered folders. */
@@ -33,6 +34,7 @@ export const PAGE_PATHS: Record<Exclude<PageKey, 'notFound'>, string> = {
   contact: '/contact/',
   privacy: '/privacy-policy/',
   terms: '/terms/',
+  results: '/results/',
 };
 
 export interface PageMeta {

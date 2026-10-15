@@ -76,7 +76,13 @@ export function Header() {
               </a>
             )}
           </div>
-          <LanguageToggle className="lang-toggle--light" />
+          <div className="topbar__end">
+            <Link to={PAGE_PATHS.results} className="topbar__result">
+              <Icon name="book" size={16} />
+              <span>{s.nav.results}</span>
+            </Link>
+            <LanguageToggle className="lang-toggle--light" />
+          </div>
         </div>
       </div>
 
@@ -133,6 +139,9 @@ export function Header() {
           </ul>
         </nav>
         <div className="mobile-menu__footer">
+          <Link to={PAGE_PATHS.results} className="btn btn--outline btn--block">
+            {s.nav.results}
+          </Link>
           <Link to={enquiryHref} className="btn btn--accent btn--block">
             {s.cta.enquireNow}
           </Link>

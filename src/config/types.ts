@@ -203,6 +203,19 @@ export interface SchoolConfig {
     facultyPostsNeedApproval: boolean;
   };
 
+  /** Printed on marksheets and student ID cards. */
+  documents: {
+    udiseCode: string;
+    /** e.g. "2026–27", printed on ID cards. */
+    session: string;
+    /** "90:A+, 80:A, …" — lowest percentage for each grade. */
+    gradeScale: string;
+    classTeacherLabel: string;
+    headTeacherLabel: string;
+    marksheetNote: string;
+    idCardNote: string;
+  };
+
   legal: {
     /** ISO date shown as "Last updated" on the Privacy Policy and Terms pages. */
     lastUpdated: string;

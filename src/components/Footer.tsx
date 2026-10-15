@@ -66,6 +66,9 @@ export function Footer() {
               <Link to={PAGE_PATHS.terms}>{s.nav.terms}</Link>
             </li>
             <li>
+              <Link to={PAGE_PATHS.results}>{s.nav.results}</Link>
+            </li>
+            <li>
               <Link to="/portal/student-login">{s.nav.studentLogin}</Link>
             </li>
             <li>

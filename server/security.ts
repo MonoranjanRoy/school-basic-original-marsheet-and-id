@@ -108,12 +108,18 @@ const memoryHits = new Map<string, { count: number; resetAt: number }>();
 
 /** Returns true when the key has exceeded `limit` hits within `windowSec`. */
 export async function rateLimited(key: string, limit: number, windowSec: number): Promise<boolean> {
-  if (redis) {
-    const k = `rl:${key}`;
-    const count = await redis.incr(k);
-    if (count === 1) await redis.expire(k, windowSec);
-    return count > limit;
+  if (redis?.isReady) {
+    try {
+      const k = `rl:${key}`;
+      const count = await redis.incr(k);
+      if (count === 1) await redis.expire(k, windowSec);
+      return count > limit;
+    } catch (err) {
+      // If Redis has a problem, keep counting in memory rather than failing every sign-in.
+      console.error('Rate limit (Redis) failed; using memory', err);
+    }
   }
+  if (memoryHits.size > 100_000) memoryHits.clear();
   const now = Date.now();
   const entry = memoryHits.get(key);
   if (!entry || entry.resetAt < now) {
@@ -125,6 +131,33 @@ export async function rateLimited(key: string, limit: number, windowSec: number)
 }
 
 export async function clearRateLimit(key: string): Promise<void> {
-  if (redis) await redis.del(`rl:${key}`);
-  else memoryHits.delete(key);
+  memoryHits.delete(key);
+  if (redis?.isReady) await redis.del(`rl:${key}`).catch(() => {});
+}
+
+/**
+ * Load shedding: when too many requests are already being handled, answer new
+ * ones at once with "busy, try again" instead of letting them pile up until
+ * the server runs out of memory. Visitors retry; the server keeps running.
+ */
+export function overloadGuard(maxInFlight: number) {
+  let inFlight = 0;
+  return (_req: Request, res: Response, next: NextFunction) => {
+    if (inFlight >= maxInFlight) {
+      res.set('Retry-After', '5');
+      res.status(503).type('text').send('The school website is very busy right now. Please try again in a few seconds.');
+      return;
+    }
+    inFlight++;
+    let done = false;
+    const finish = () => {
+      if (!done) {
+        done = true;
+        inFlight--;
+      }
+    };
+    res.on('finish', finish);
+    res.on('close', finish);
+    next();
+  };
 }

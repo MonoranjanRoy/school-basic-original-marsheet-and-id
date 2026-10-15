@@ -17,6 +17,7 @@ import Home from './pages/Home';
 import { Privacy, Terms } from './pages/Legal';
 import NotFound from './pages/NotFound';
 import Notices from './pages/Notices';
+import ResultCheck from './pages/ResultCheck';
 
 // The staff/student portal is loaded only when someone opens /portal.
 const Portal = lazy(() => import('./portal/Portal'));
@@ -32,6 +33,7 @@ const PAGES: [Exclude<PageKey, 'home' | 'notFound'>, ComponentType][] = [
   ['contact', Contact],
   ['privacy', Privacy],
   ['terms', Terms],
+  ['results', ResultCheck],
 ];
 
 const p = (path: string) => path.replace(/^\/|\/$/g, '');

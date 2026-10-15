@@ -253,6 +253,25 @@ export const SECTIONS: Section[] = [
     ],
   },
   {
+    id: 'documents',
+    title: 'Marksheet & ID card',
+    intro: 'School details printed on marksheets and student ID cards. The school name, logo, address, phone and affiliation come from the other sections.',
+    fields: [
+      { type: 'text', key: 'documents.udiseCode', label: 'UDISE code', help: 'Printed on marksheets and ID cards. Leave empty to hide.' },
+      { type: 'text', key: 'documents.session', label: 'Current session', help: 'e.g. 2026–27. Printed on ID cards.' },
+      {
+        type: 'text',
+        key: 'documents.gradeScale',
+        label: 'Grade scale',
+        help: 'Lowest percentage for each grade, highest first, e.g. “90:A++, 80:A+, 70:A, 60:B+, 50:B, 40:C+, 33:C, 0:D”. Used for exams that don’t have their own grade scale, when no grade is typed in for a student.',
+      },
+      { type: 'text', key: 'documents.classTeacherLabel', label: 'First signature on marksheets', help: 'e.g. Class Teacher. Leave empty to hide.' },
+      { type: 'text', key: 'documents.headTeacherLabel', label: 'Head-teacher signature title', help: 'e.g. Head Teacher or Headmaster. Printed on marksheets and ID cards.' },
+      { type: 'text', key: 'documents.marksheetNote', label: 'Note at the bottom of marksheets', multiline: true },
+      { type: 'text', key: 'documents.idCardNote', label: 'Note on ID cards', help: 'e.g. If found, please return to the school.' },
+    ],
+  },
+  {
     id: 'legal',
     title: 'Privacy & terms',
     intro: 'Details used on the Privacy Policy and Terms pages.',

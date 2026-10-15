@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 import { api, errorMessage } from '../api';
 import { ROLE_LABELS, useAuth, type Role } from '../auth';
-import { Badge, ConfirmButton, PageTitle, StatusMessage, type Status } from '../components/ui';
+import { Badge, Checkbox, ConfirmButton, PageTitle, StatusMessage, type Status } from '../components/ui';
 
 interface Account {
   id: string;
@@ -47,6 +48,7 @@ export default function Users() {
   const [student, setStudent] = useState({ displayName: '', studentId: '', dateOfBirth: '' });
   const [editing, setEditing] = useState<{ id: string; displayName: string; studentId: string; dateOfBirth: string; isStudent: boolean } | null>(null);
   const [filter, setFilter] = useState<Role | 'all'>('all');
+  const [settingPw, setSettingPw] = useState<{ id: string; username: string; password: string; confirm: string; mustChange: boolean } | null>(null);
 
   const load = useCallback(() => {
     api<{ users: Account[] }>('/users')
@@ -113,6 +115,18 @@ export default function Users() {
     }
   }
 
+  async function savePassword(e: FormEvent) {
+    e.preventDefault();
+    if (!settingPw) return;
+    if (settingPw.password.length < 10) return setStatus({ kind: 'error', message: 'The password must be at least 10 characters.' });
+    if (settingPw.password !== settingPw.confirm) return setStatus({ kind: 'error', message: 'The two passwords do not match.' });
+    const ok = await run(
+      () => api(`/users/${settingPw.id}/set-password`, { method: 'POST', body: { password: settingPw.password, mustChange: settingPw.mustChange } }),
+      `Password changed for “${settingPw.username}”. They have been signed out and can sign in with the new password.`,
+    );
+    if (ok) setSettingPw(null);
+  }
+
   const shown = users?.filter((u) => filter === 'all' || u.role === filter);
 
   return (
@@ -121,6 +135,9 @@ export default function Users() {
         title="Accounts"
         intro="Staff sign in with a username and password. Students sign in with their student ID and date of birth."
       />
+      <p className="palert palert--info">
+        To add students with their class, parents, PEN, Aadhaar and photo (for marksheets and ID cards), use <Link to="/portal/students">Students</Link>.
+      </p>
       <StatusMessage status={status} />
 
       {creds && (
@@ -178,6 +195,55 @@ export default function Users() {
               Save
             </button>
             <button type="button" className="pbtn pbtn--ghost" onClick={() => setEditing(null)}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+
+      {settingPw && (
+        <form className="pcard pform" onSubmit={savePassword} noValidate>
+          <h2>
+            Set password for <code>{settingPw.username}</code>
+          </h2>
+          <div className="pform__row">
+            <div className="pfield">
+              <label htmlFor="sp-new">New password</label>
+              <input
+                id="sp-new"
+                type="password"
+                autoComplete="new-password"
+                value={settingPw.password}
+                onChange={(e) => setSettingPw({ ...settingPw, password: e.target.value })}
+                aria-describedby="sp-new-h"
+                required
+              />
+              <p id="sp-new-h" className="hint">
+                At least 10 characters, not containing the username.
+              </p>
+            </div>
+            <div className="pfield">
+              <label htmlFor="sp-confirm">Repeat new password</label>
+              <input
+                id="sp-confirm"
+                type="password"
+                autoComplete="new-password"
+                value={settingPw.confirm}
+                onChange={(e) => setSettingPw({ ...settingPw, confirm: e.target.value })}
+                required
+              />
+            </div>
+          </div>
+          <Checkbox
+            label="Ask them to choose their own password when they next sign in"
+            checked={settingPw.mustChange}
+            onChange={(v) => setSettingPw({ ...settingPw, mustChange: v })}
+          />
+          <div className="pform__actions">
+            <button type="submit" className="pbtn pbtn--primary" disabled={status.kind === 'busy'}>
+              Set password
+            </button>
+            <button type="button" className="pbtn pbtn--ghost" onClick={() => setSettingPw(null)}>
               Cancel
             </button>
           </div>
@@ -365,9 +431,18 @@ export default function Users() {
                     {!isMe && (
                       <>
                         {!isStudent && (
-                          <button type="button" className="pbtn pbtn--secondary pbtn--sm" onClick={() => resetPassword(u)}>
-                            Reset password
-                          </button>
+                          <>
+                            <button
+                              type="button"
+                              className="pbtn pbtn--secondary pbtn--sm"
+                              onClick={() => setSettingPw({ id: u.id, username: u.username, password: '', confirm: '', mustChange: false })}
+                            >
+                              Set password
+                            </button>
+                            <button type="button" className="pbtn pbtn--secondary pbtn--sm" onClick={() => resetPassword(u)}>
+                              Reset password
+                            </button>
+                          </>
                         )}
                         <button
                           type="button"

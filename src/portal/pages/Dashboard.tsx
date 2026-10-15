@@ -74,6 +74,9 @@ export default function Dashboard() {
       <div className="quick-grid">
         {user.role === 'head_teacher' && (
           <>
+            <QuickLink to="/portal/students" title="Students" text="Class, roll no., PEN, Aadhaar, parents, photo." />
+            <QuickLink to="/portal/results" title="Results & marksheets" text="Enter marks, print marksheets, publish results." />
+            <QuickLink to="/portal/id-cards" title="ID cards" text="Print ID cards for a whole class." />
             <QuickLink to="/portal/website" title="Edit website content" text="Text, photos and which pages are shown." />
             <QuickLink to="/portal/users" title="Manage accounts" text="Add teachers and students, reset passwords." />
             <QuickLink to="/portal/faculty" title="Faculty profiles" text="Who appears on the Faculty page." />

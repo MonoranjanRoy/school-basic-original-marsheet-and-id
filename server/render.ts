@@ -45,6 +45,25 @@ function page(site: SchoolConfig, headHtml: string, bodyHtml: string, renderedPa
     .replace('</body>', () => `<script id="site-data" type="application/json">${jsonForScript(site)}</script>\n</body>`);
 }
 
+/**
+ * Rendered pages, reused until the website content changes. Rendering React
+ * is the most expensive work the server does, so with thousands of visitors
+ * each page is rendered once, not once per visitor.
+ */
+const htmlCache = new Map<string, { site: SchoolConfig; status: number; html: string }>();
+
+function cached(key: string, site: SchoolConfig, build: () => { status: number; html: string }) {
+  const hit = htmlCache.get(key);
+  if (hit && hit.site === site) return hit;
+  // Unknown addresses (404s) are not cached, so random URLs cannot fill memory.
+  const entry = { site, ...build() };
+  if (entry.status === 200) {
+    if (htmlCache.size > 500) htmlCache.clear();
+    htmlCache.set(key, entry);
+  }
+  return entry;
+}
+
 export async function renderPage(req: Request, res: Response): Promise<void> {
   const site = await getPublicSite();
   const pathname = req.path;
@@ -52,13 +71,16 @@ export async function renderPage(req: Request, res: Response): Promise<void> {
 
   // Portal: rendered in the browser only, never indexed.
   if (pathname === '/portal' || pathname.startsWith('/portal/')) {
-    const name = typeof site.school.name === 'string' ? site.school.name : site.school.name.en;
-    const headHtml = [
-      `<title>Portal | ${escapeHtml(name)}</title>`,
-      '<meta name="robots" content="noindex, nofollow">',
-      `<link rel="icon" href="${escapeHtml(site.school.logo.src)}">`,
-    ].join('\n    ');
-    res.type('html').send(page(site, headHtml, '', null));
+    const { html } = cached('portal', site, () => {
+      const name = typeof site.school.name === 'string' ? site.school.name : site.school.name.en;
+      const headHtml = [
+        `<title>Portal | ${escapeHtml(name)}</title>`,
+        '<meta name="robots" content="noindex, nofollow">',
+        `<link rel="icon" href="${escapeHtml(site.school.logo.src)}">`,
+      ].join('\n    ');
+      return { status: 200, html: page(site, headHtml, '', null) };
+    });
+    res.type('html').send(html);
     return;
   }
 
@@ -70,8 +92,11 @@ export async function renderPage(req: Request, res: Response): Promise<void> {
     return;
   }
   const normalised = pathname.replace(/\/?$/, '/');
-  const html = page(site, ssr!.head(key, site), ssr!.render(normalised, site), normalised);
-  res.status(key === 'notFound' ? 404 : 200).type('html').send(html);
+  const { status, html } = cached(normalised, site, () => ({
+    status: key === 'notFound' ? 404 : 200,
+    html: page(site, ssr!.head(key, site), ssr!.render(normalised, site), normalised),
+  }));
+  res.status(status).type('html').send(html);
 }
 
 export async function sitemap(_req: Request, res: Response): Promise<void> {

@@ -1,13 +1,16 @@
+import compression from 'compression';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
+import { isDatabaseBusy } from './db.js';
 import { env } from './env.js';
 import { distDir, loadFrontend, renderPage, robots, sitemap } from './render.js';
 import { authRouter } from './routes/auth.js';
 import { activityRouter, facultyRouter, galleryRouter, noticesRouter, publicRouter, settingsRouter } from './routes/content.js';
 import { mediaApiRouter, mediaFileRouter } from './routes/media.js';
-import { examsRouter, myResultsRouter } from './routes/results.js';
+import { examsRouter, myResultsRouter, resultLookupRouter } from './routes/results.js';
+import { studentsRouter } from './routes/students.js';
 import { usersRouter } from './routes/users.js';
-import { HttpError, loadUser, requireAuth, sameOriginOnly } from './security.js';
+import { HttpError, loadUser, overloadGuard, requireAuth, sameOriginOnly } from './security.js';
 import { sessionMiddleware } from './session.js';
 
 export async function createApp() {
@@ -42,6 +45,10 @@ export async function createApp() {
     res.json({ ok: true });
   });
 
+  app.use(overloadGuard(env.maxInFlight));
+  // Smaller pages for phones on slow connections (photos are already compressed).
+  app.use(compression());
+
   app.use('/media', mediaFileRouter);
 
   // ---------- API ----------
@@ -57,6 +64,8 @@ export async function createApp() {
   });
   api.use('/auth', authRouter);
   api.use('/public', publicRouter);
+  api.use('/result-lookup', resultLookupRouter);
+  api.use('/students', requireAuth, studentsRouter);
   api.use('/settings', requireAuth, settingsRouter);
   api.use('/users', requireAuth, usersRouter);
   api.use('/notices', requireAuth, noticesRouter);
@@ -97,6 +106,11 @@ export async function createApp() {
     } else if (err && typeof err === 'object' && 'type' in err && err.type === 'entity.parse.failed') {
       status = 400;
       message = 'Invalid request.';
+    } else if (isDatabaseBusy(err)) {
+      status = 503;
+      message = 'The school website is very busy right now. Please try again in a minute.';
+      res.set('Retry-After', '30');
+      console.error('Database busy:', err instanceof Error ? err.message : err);
     } else {
       console.error(err);
     }

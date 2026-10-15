@@ -30,6 +30,7 @@ const en = {
     terms: 'Terms of Use',
     portal: 'Staff login',
     studentLogin: 'Student login',
+    results: 'Check result',
   },
 
   pageIntro: {
@@ -43,6 +44,7 @@ const en = {
     contact: 'Visit, call or write to us.',
     privacy: 'How this website handles your information.',
     terms: 'The terms that apply when you use this website.',
+    results: 'Enter the ID card number and date of birth to see the marksheet.',
   },
 
   cta: {
@@ -189,6 +191,19 @@ const en = {
     rights: 'All rights reserved.',
   },
 
+  resultCheck: {
+    studentId: 'Student ID (as on the ID card)',
+    studentIdHint: 'For example 2026-045',
+    dob: 'Date of birth',
+    submit: 'Show result',
+    checking: 'Checking…',
+    missing: 'Enter the student ID and date of birth.',
+    none: 'No results have been published for this student yet. Please check again later.',
+    print: 'Print / save as PDF',
+    another: 'Check another result',
+    privacy: 'Only results the school has published are shown. Keep your ID card number and date of birth private.',
+  },
+
   offlineBanner: 'The website server is not running, so starter content is shown and the portal will not work. Start everything with: npm run dev',
   setupBanner: 'Setup reminder (shown only in development): {n} placeholder texts remain. Replace them in the portal under “Website content”.',
 };
@@ -220,6 +235,7 @@ const bn: Strings = {
     terms: 'ব্যবহারের শর্তাবলি',
     portal: 'শিক্ষক-কর্মী লগইন',
     studentLogin: 'ছাত্রছাত্রী লগইন',
+    results: 'ফলাফল দেখুন',
   },
 
   pageIntro: {
@@ -233,6 +249,7 @@ const bn: Strings = {
     contact: 'আসুন, ফোন করুন বা লিখুন।',
     privacy: 'এই ওয়েবসাইট আপনার তথ্য কীভাবে ব্যবহার করে।',
     terms: 'এই ওয়েবসাইট ব্যবহারের শর্তাবলি।',
+    results: 'মার্কশিট দেখতে আইডি কার্ড নম্বর ও জন্ম তারিখ লিখুন।',
   },
 
   cta: {
@@ -377,6 +394,19 @@ const bn: Strings = {
     quickLinks: 'দ্রুত লিংক',
     information: 'তথ্য',
     rights: 'সর্বস্বত্ব সংরক্ষিত।',
+  },
+
+  resultCheck: {
+    studentId: 'ছাত্র/ছাত্রীর আইডি (আইডি কার্ডে যেমন আছে)',
+    studentIdHint: 'যেমন 2026-045',
+    dob: 'জন্ম তারিখ',
+    submit: 'ফলাফল দেখুন',
+    checking: 'দেখা হচ্ছে…',
+    missing: 'আইডি এবং জন্ম তারিখ লিখুন।',
+    none: 'এই ছাত্র/ছাত্রীর কোনো ফলাফল এখনও প্রকাশিত হয়নি। পরে আবার দেখুন।',
+    print: 'প্রিন্ট / PDF হিসেবে সেভ করুন',
+    another: 'অন্য ফলাফল দেখুন',
+    privacy: 'বিদ্যালয় যে ফলাফল প্রকাশ করেছে কেবল সেগুলিই দেখানো হয়। আইডি কার্ড নম্বর ও জন্ম তারিখ অন্যকে জানাবেন না।',
   },
 
   offlineBanner: 'ওয়েবসাইটের সার্ভার চালু নেই, তাই প্রাথমিক বিষয়বস্তু দেখানো হচ্ছে এবং পোর্টাল কাজ করবে না। সব চালু করতে: npm run dev',

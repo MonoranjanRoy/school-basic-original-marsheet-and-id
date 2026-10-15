@@ -1,0 +1,465 @@
+/* Marksheets and student ID cards: on screen (phone and computer) and in print. */
+
+@page {
+  size: A4;
+  margin: 10mm;
+}
+
+/* ==========================================================================
+   Marksheet
+   ========================================================================== */
+.ms {
+  width: 100%;
+  max-width: 210mm;
+  margin: 0 auto 24px;
+  padding: 16px;
+  background: #fff;
+  color: #111;
+  border: 2px solid var(--color-primary-dark);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+@media (min-width: 600px) {
+  .ms {
+    padding: 28px 32px;
+  }
+}
+
+.ms__head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 3px double var(--color-primary-dark);
+  text-align: left;
+}
+
+@media (min-width: 600px) {
+  .ms__head {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.ms__logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ms__school {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--color-primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.ms__line {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: #333;
+}
+
+.ms__title {
+  text-align: center;
+  margin: 14px 0;
+}
+
+.ms__title h2 {
+  display: inline-block;
+  margin: 0;
+  padding: 4px 18px;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--color-primary-dark);
+  border-radius: 999px;
+}
+
+.ms__title p {
+  margin: 6px 0 0;
+  font-weight: 700;
+}
+
+.ms__details {
+  display: grid;
+  gap: 4px 24px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #c7ced6;
+  border-radius: 4px;
+}
+
+@media (min-width: 560px) {
+  .ms__details {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ms__details div {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ms__details dt {
+  flex: 0 0 auto;
+  min-width: 108px;
+  color: #444;
+}
+
+.ms__details dt::after {
+  content: ':';
+}
+
+.ms__details dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.ms__table-wrap {
+  overflow-x: auto;
+}
+
+.ms__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ms__table th,
+.ms__table td {
+  padding: 6px 10px;
+  border: 1px solid #9aa5b1;
+  text-align: center;
+}
+
+.ms__table thead th {
+  background: var(--color-info-bg);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 479px) {
+  .ms {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  .ms__table th,
+  .ms__table td {
+    padding: 5px 5px;
+  }
+  .ms__table thead th {
+    font-size: 0.75rem;
+  }
+}
+
+.ms__table tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.ms__table tfoot th,
+.ms__table tfoot td {
+  font-weight: 800;
+  background: #f4f6f9;
+}
+
+.ms__mark {
+  font-weight: 700;
+}
+
+.ms__table .is-fail .ms__mark {
+  color: var(--color-error);
+}
+
+.ms__flag {
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+/* A part's marks, e.g. 35/40, with failed parts in red. */
+.ms__of {
+  font-size: 0.75em;
+  color: #555;
+}
+
+.ms__table td.is-fail {
+  color: var(--color-error);
+  font-weight: 700;
+}
+
+.ms__na {
+  color: #888;
+}
+
+.ms__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0 8px;
+}
+
+.ms__summary div {
+  flex: 1 1 120px;
+  padding: 8px 12px;
+  border: 1px solid #c7ced6;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.ms__summary dt {
+  font-size: 0.8rem;
+  color: #444;
+}
+
+.ms__summary dd {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.ms__summary .is-pass dd {
+  color: var(--color-success);
+}
+
+.ms__summary .is-fail dd {
+  color: var(--color-error);
+}
+
+.ms__remarks {
+  margin: 8px 0 0;
+}
+
+.ms__signs {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 56px;
+}
+
+.ms__signs span {
+  flex: 1;
+  max-width: 180px;
+  padding-top: 6px;
+  border-top: 1px solid #333;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.ms__note {
+  margin: 18px 0 0;
+  font-size: 0.75rem;
+  color: #555;
+  text-align: center;
+}
+
+/* ==========================================================================
+   Student ID card — standard CR80 size (54 × 85.6 mm), portrait
+   ========================================================================== */
+.idcard-sheet {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 54mm);
+  gap: 5mm 6mm;
+  justify-content: center;
+  margin-bottom: 5mm;
+}
+
+.idcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 54mm;
+  height: 85.6mm;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+  border: 0.3mm solid #888;
+  border-radius: 3mm;
+  font-size: 6.6pt;
+  line-height: 1.25;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.idcard__head {
+  display: flex;
+  gap: 1.5mm;
+  align-items: center;
+  padding: 2mm 2.2mm;
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+.idcard__logo {
+  width: 9mm;
+  height: 9mm;
+  flex-shrink: 0;
+  object-fit: contain;
+  background: #fff;
+  border-radius: 1.5mm;
+  padding: 0.4mm;
+}
+
+.idcard__school {
+  margin: 0;
+  font-size: 7.6pt;
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.idcard__addr {
+  margin: 0.6mm 0 0;
+  font-size: 5.2pt;
+  opacity: 0.92;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.idcard__band {
+  margin: 0;
+  padding: 0.6mm 0;
+  background: var(--color-accent);
+  color: #1f1300;
+  font-size: 6pt;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.idcard__photo {
+  display: block;
+  width: 19mm;
+  height: 23mm;
+  margin: 1.8mm auto 1.2mm;
+  object-fit: cover;
+  border: 0.4mm solid var(--color-primary-dark);
+  border-radius: 1mm;
+  background: var(--color-info-bg);
+}
+
+.idcard__photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14pt;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+.idcard__name {
+  margin: 0 2mm;
+  font-size: 8.4pt;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--color-primary-dark);
+}
+
+.idcard__class {
+  margin: 0.5mm 2mm 1.2mm;
+  text-align: center;
+  font-weight: 700;
+}
+
+.idcard__rows {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35mm 1.5mm;
+  margin: 0 2.4mm;
+}
+
+.idcard__rows dt {
+  color: #444;
+  white-space: nowrap;
+}
+
+.idcard__rows dd {
+  margin: 0;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.idcard__rows dd.idcard__address {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 600;
+}
+
+.idcard__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2mm;
+  margin-top: auto;
+  padding: 1mm 2.4mm 1.8mm;
+  font-size: 5pt;
+}
+
+.idcard__note {
+  margin: 0;
+  color: #444;
+  max-width: 26mm;
+}
+
+.idcard__sign {
+  min-width: 17mm;
+  padding-top: 0.6mm;
+  border-top: 0.2mm solid #333;
+  text-align: center;
+  font-size: 5.4pt;
+}
+
+/* ==========================================================================
+   Print: only the documents
+   ========================================================================== */
+@media print {
+  .no-print,
+  .print-docs .page-header {
+    display: none !important;
+  }
+  .ms {
+    max-width: none;
+    margin: 0;
+    padding: 6mm 8mm;
+    font-size: 10.5pt;
+    break-after: page;
+    break-inside: avoid;
+  }
+  .ms:last-child {
+    break-after: auto;
+  }
+  .ms__head {
+    justify-content: center;
+    text-align: center;
+  }
+  .ms__details {
+    grid-template-columns: 1fr 1fr;
+  }
+  .idcard-sheet {
+    justify-content: start;
+    break-after: page;
+  }
+  .idcard-sheet:last-child {
+    break-after: auto;
+  }
+  .idcard {
+    border-style: dashed;
+  }
+}

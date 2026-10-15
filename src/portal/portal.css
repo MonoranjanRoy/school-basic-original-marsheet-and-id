@@ -1075,3 +1075,347 @@
     border-color: #999;
   }
 }
+
+/* ---------- Students, marks entry, documents ---------- */
+.hint--error {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.pfield input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.subject-row {
+  grid-template-columns: 1fr 96px 96px auto;
+}
+
+@media (max-width: 599px) {
+  .subject-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .subject-row .pfield:first-child {
+    grid-column: 1 / -1;
+  }
+  .subject-row > button {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.filter-bar .pfield {
+  flex: 0 1 200px;
+}
+
+.filter-bar .filter-bar__grow {
+  flex: 1 1 260px;
+}
+
+.steps {
+  margin: 12px 0 16px;
+  padding-left: 22px;
+  display: grid;
+  gap: 6px;
+}
+
+details.pcard > summary {
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.linkish {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--color-primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.linkish:disabled {
+  color: var(--color-muted);
+  cursor: not-allowed;
+}
+
+.student-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.student-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.student-row__photo {
+  width: 52px;
+  height: 62px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--color-info-bg);
+}
+
+.student-row__photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.student-row__main {
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.student-row__main p {
+  margin: 0;
+}
+
+.student-row__name {
+  font-weight: 700;
+}
+
+.student-row__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.more-actions {
+  position: relative;
+}
+
+.more-actions > summary {
+  list-style: none;
+}
+
+.more-actions > summary::-webkit-details-marker {
+  display: none;
+}
+
+.more-actions__menu {
+  position: absolute;
+  right: 0;
+  z-index: 5;
+  display: grid;
+  gap: 6px;
+  min-width: 210px;
+  margin-top: 6px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-lg);
+}
+
+.more-actions__menu .pbtn {
+  justify-content: flex-start;
+}
+
+/* Marks grid: the student column stays visible while scrolling sideways on phones. */
+.marks-grid {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.marks-grid .ptable th,
+.marks-grid .ptable td {
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+
+/* The whole header sticks, so both rows stay visible when subjects have parts. */
+.marks-grid thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.marks-grid .marks-grid__group {
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.marks-grid .marks-grid__part {
+  font-weight: 500;
+}
+
+.marks-grid__fail {
+  color: var(--color-error);
+}
+
+.marks-grid .marks-grid__sticky {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #fff;
+  min-width: 150px;
+  max-width: 220px;
+  white-space: normal;
+  box-shadow: 1px 0 0 var(--color-border);
+}
+
+.marks-grid thead .marks-grid__sticky {
+  z-index: 3;
+  background: #f8fafc;
+}
+
+.marks-grid tr.is-dirty .marks-grid__sticky {
+  box-shadow: inset 4px 0 0 var(--color-accent), 1px 0 0 var(--color-border);
+}
+
+.marks-grid__name {
+  display: block;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.92rem;
+}
+
+.marks-grid__sub {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+
+.marks-grid__max {
+  font-weight: 400;
+}
+
+.marks-grid__input {
+  width: 64px;
+  min-height: 38px;
+  padding: 4px 6px;
+  border: 1.5px solid #9aa5b1;
+  border-radius: 6px;
+  font: inherit;
+  text-align: center;
+}
+
+.marks-grid__input[aria-invalid='true'] {
+  border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+.marks-grid__input--grade {
+  width: 60px;
+}
+
+.marks-grid__input--remarks {
+  width: 180px;
+  text-align: left;
+}
+
+.marks-grid__calc {
+  font-weight: 700;
+  text-align: center;
+}
+
+@media print {
+  .portal-main > .ms,
+  .portal-main > .idcard-sheet {
+    margin-left: 0;
+  }
+}
+
+/* ---------- Exam setup: parts, subject matrix, grade scale ---------- */
+.plist-field .part-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.part-list__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.part-list__item input {
+  width: 150px;
+  min-height: 38px;
+  padding: 4px 10px;
+  border: 1.5px solid #9aa5b1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.exam-matrix th,
+.exam-matrix td {
+  padding: 6px 8px;
+  white-space: nowrap;
+}
+
+.exam-matrix__sub {
+  display: block;
+  font-weight: 400;
+  font-size: 0.75rem;
+}
+
+.exam-matrix input,
+.grade-scale__table input {
+  border: 1.5px solid #9aa5b1;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.exam-matrix input {
+  width: 64px;
+  min-height: 38px;
+  padding: 4px 6px;
+}
+
+.exam-matrix .exam-matrix__name {
+  width: 150px;
+}
+
+.exam-matrix__pair {
+  display: flex;
+  gap: 4px;
+}
+
+.grade-scale {
+  margin: 4px 0 12px 28px;
+}
+
+.grade-scale__table {
+  width: auto;
+  margin: 8px 0;
+}
+
+.grade-scale__table th,
+.grade-scale__table td {
+  padding: 4px 8px;
+}
+
+.grade-scale__table input {
+  width: 90px;
+  min-height: 38px;
+  padding: 4px 6px;
+}
+
+@media (max-width: 599px) {
+  .grade-scale {
+    margin-left: 0;
+  }
+}

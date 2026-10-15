@@ -12,6 +12,11 @@ async function main() {
   const server = app.listen(env.port, () => {
     console.log(`School website listening on http://localhost:${env.port}`);
   });
+  // Keep connections from Railway's proxy open longer than the proxy does (avoids random 502s),
+  // and drop clients that send requests too slowly.
+  server.keepAliveTimeout = 65_000;
+  server.headersTimeout = 66_000;
+  server.requestTimeout = 60_000;
 
   const shutdown = () => {
     server.close(async () => {
@@ -24,6 +29,14 @@ async function main() {
   process.on('SIGTERM', shutdown);
   process.on('SIGINT', shutdown);
 }
+
+// A stray rejected promise is logged, not fatal. A truly unexpected exception
+// leaves the process in an unknown state, so it exits and Railway restarts it.
+process.on('unhandledRejection', (err) => console.error('Unhandled promise rejection', err));
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception — restarting', err);
+  process.exit(1);
+});
 
 main().catch((err) => {
   console.error('Failed to start:', err);
