@@ -1,0 +1,48 @@
+{
+  "name": "school-website",
+  "private": true,
+  "version": "1.0.0",
+  "description": "School website with a staff & student portal. Node + Postgres + Redis, deployable on Railway.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "api": "node scripts/dev.mjs --api-only",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.server.json",
+    "build": "npm run typecheck && vite build && vite build --ssr src/entry-server.tsx --outDir build/ssr && vite build -c vite.server.config.ts",
+    "start": "node build/server/index.js",
+    "start:local": "node scripts/dev.mjs --built"
+  },
+  "engines": {
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "connect-redis": "^10.0.0",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "multer": "^2.4.0",
+    "pg": "^8.23.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.18.4",
+    "redis": "^6.2.1",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
+    "@electric-sql/pglite-socket": "^0.2.11",
+    "@types/express": "^5.0.6",
+    "@types/express-session": "^1.19.0",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^22.15.21",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.5.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5.8.3",
+    "vite": "^6.4.4"
+  }
+}

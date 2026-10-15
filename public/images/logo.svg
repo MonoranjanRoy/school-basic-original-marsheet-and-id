@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Placeholder school logo">
+  <path d="M32 3 8 11v18c0 15 10 26 24 32 14-6 24-17 24-32V11L32 3z" fill="#1d4e89"/>
+  <path d="M32 7 12 14v15c0 12.6 8.2 22 20 27.5C43.8 51 52 41.6 52 29V14L32 7z" fill="none" stroke="#e0a526" stroke-width="2"/>
+  <path d="M18 24c5-2 10-2 14 1v19c-4-3-9-3-14-1V24z" fill="#fff"/>
+  <path d="M46 24c-5-2-10-2-14 1v19c4-3 9-3 14-1V24z" fill="#e8eef6"/>
+  <path d="M32 25v19" stroke="#1d4e89" stroke-width="1.5"/>
+  <path d="M27 14h10l-5 6z" fill="#e0a526"/>
+</svg>

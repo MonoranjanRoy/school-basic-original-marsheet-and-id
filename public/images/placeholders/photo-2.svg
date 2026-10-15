@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b07d2a"/><stop offset="1" stop-color="#6e4b12"/></linearGradient></defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="6">
+    <rect x="480" y="240" width="240" height="224" rx="12"/>
+    <circle cx="546" cy="304" r="24"/>
+    <path d="M480 440 L564 360 L624 408 L660 384 L720 440"/>
+  </g>
+  <text x="50%" y="560" text-anchor="middle" font-family="system-ui, sans-serif" font-size="33" fill="#ffffff" fill-opacity=".85">Photo placeholder — replace with a school photograph</text>
+</svg>
